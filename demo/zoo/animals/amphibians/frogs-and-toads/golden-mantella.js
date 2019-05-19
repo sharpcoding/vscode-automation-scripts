@@ -1,1 +1,1 @@
-export const goldenMantella = buffer => [...buffer, "I'm the golden-mantella"];
+export const goldenMantella = buffer => [...buffer, 'Visiting golden mantella'];
