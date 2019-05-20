@@ -10,6 +10,7 @@ import { sarusCrane } from '../animals/birds/cranes-trumpeters/sarus-crane';
 import { whiteNapedCrane } from '../animals/birds/cranes-trumpeters/white-naped-crane';
 import { carmineBeeEater } from '../animals/birds/kingfishers-hornbills-bee-eaters/carmine-bee-eater';
 import { kookaburra } from '../animals/birds/kingfishers-hornbills-bee-eaters/kookaburra';
+import { welcomePack } from './package/welcome-pack';
 
 const functionsToCall = R.pipe(
   buyTickets,

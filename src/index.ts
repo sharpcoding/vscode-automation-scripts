@@ -7,10 +7,18 @@ const commandLineOptionDefinitions = [
     name: 'absolute-imports-by-root-module',
     alias: 'a',
     type: Boolean
+  },
+  {
+    name: 'workspace-folder',
+    type: String
   }
 ];
 const options = commandLineArgs(commandLineOptionDefinitions);
 
-if (options.path && options['absolute-imports-by-root-module']) {
-  absoluteImportsByRootModule(options.path);
+if (
+  options.path &&
+  options['absolute-imports-by-root-module'] &&
+  options['workspace-folder']
+) {
+  absoluteImportsByRootModule(options.path, options['workspace-folder']);
 }

@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as R from 'ramda';
 import { codeTransformer } from '../code-transformer';
+import { importRefersToRootModule } from './path-depths';
 
 interface AnalyseRelativeModuleImportResult {
   dirChangers: string;
@@ -26,32 +27,47 @@ const analyseRelativeModuleImport = (
   } as AnalyseRelativeModuleImportResult;
 };
 
+const looksLikeNodeModulesImport = (relativeImportPath): boolean =>
+  _.split(relativeImportPath, path.sep).length === 1;
+
 const getAbsoluteImportPathByRootModule = (
-  srcFilePath: string,
-  relativeImportPath: string
+  srcFileAbsolutePath: string,
+  workspaceFolderAbsolutePath: string,
+  moduleImportRelativePath: string
 ): string => {
-  if (path.isAbsolute(srcFilePath)) return relativeImportPath;
-  const srcFileDirectory = path.dirname(srcFilePath);
-  const pathAnalysis = analyseRelativeModuleImport(relativeImportPath);
+  if (looksLikeNodeModulesImport(moduleImportRelativePath)) {
+    return moduleImportRelativePath;
+  }
+  const srcFileDirectory = path.dirname(srcFileAbsolutePath);
+  const pathAnalysis = analyseRelativeModuleImport(moduleImportRelativePath);
   const moduleBaseName = path.basename(
     path.join(srcFileDirectory, pathAnalysis.dirChangers)
   );
-  return path.join(moduleBaseName, pathAnalysis.moduleReference);
+  const refersToRootModule = importRefersToRootModule(
+    srcFileAbsolutePath,
+    workspaceFolderAbsolutePath,
+    moduleImportRelativePath
+  );
+  const modifier = refersToRootModule ? '' : '{rel_path_to_root_module}/';
+  return `${modifier}${path.join(
+    moduleBaseName,
+    pathAnalysis.moduleReference
+  )}`;
 };
 
-// console.log(
-//   getAbsoluteImportPathByRootModule(
-//     '/Users/tms/projects/vscode-automation-scripts/demo/zoo/visitors/family.js',
-//     '../animals/amphibians/frogs-and-toads/golden-mantella'
-//   )
-// );
-
-export const absoluteImportsByRootModule = (srcFilePath: string) => {
+export const absoluteImportsByRootModule = (
+  srcFileAbsolutePath: string,
+  workspaceFolderAbsolutePath: string
+) => {
   co(function*() {
-    const transformResult = yield codeTransformer(srcFilePath, {
+    const transformResult = yield codeTransformer(srcFileAbsolutePath, {
       IMPORT_DETECTED: {
         transformNodeValue: node => {
-          return getAbsoluteImportPathByRootModule(srcFilePath, node.value);
+          return getAbsoluteImportPathByRootModule(
+            srcFileAbsolutePath,
+            workspaceFolderAbsolutePath,
+            node.value
+          );
         }
       }
     });
