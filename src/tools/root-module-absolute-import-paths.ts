@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as R from 'ramda';
 import { codeTransformer } from '../code-transformer';
-import { importRefersToRootModule } from './path-depths';
+import { moduleImportRelavitePathToRootModuleDepthDifference } from './path-depths';
 
 interface AnalyseRelativeModuleImportResult {
   dirChangers: string;
@@ -30,7 +30,7 @@ const analyseRelativeModuleImport = (
 const looksLikeNodeModulesImport = (relativeImportPath): boolean =>
   _.split(relativeImportPath, path.sep).length === 1;
 
-const getAbsoluteImportPathByRootModule = (
+const getRootModuleAbsoluteImportPath = (
   srcFileAbsolutePath: string,
   workspaceFolderAbsolutePath: string,
   moduleImportRelativePath: string
@@ -43,19 +43,22 @@ const getAbsoluteImportPathByRootModule = (
   const moduleBaseName = path.basename(
     path.join(srcFileDirectory, pathAnalysis.dirChangers)
   );
-  const refersToRootModule = importRefersToRootModule(
+  const pathDepthDifference = moduleImportRelavitePathToRootModuleDepthDifference(
     srcFileAbsolutePath,
     workspaceFolderAbsolutePath,
     moduleImportRelativePath
   );
-  const modifier = refersToRootModule ? '' : '{rel_path_to_root_module}/';
+  const modifier =
+    pathDepthDifference == 0
+      ? ''
+      : `rel_path_to_root_module_${pathDepthDifference}${path.sep}`;
   return `${modifier}${path.join(
     moduleBaseName,
     pathAnalysis.moduleReference
   )}`;
 };
 
-export const absoluteImportsByRootModule = (
+export const rootModuleAbsoluteImportPaths = (
   srcFileAbsolutePath: string,
   workspaceFolderAbsolutePath: string
 ) => {
@@ -63,7 +66,7 @@ export const absoluteImportsByRootModule = (
     const transformResult = yield codeTransformer(srcFileAbsolutePath, {
       IMPORT_DETECTED: {
         transformNodeValue: node => {
-          return getAbsoluteImportPathByRootModule(
+          return getRootModuleAbsoluteImportPath(
             srcFileAbsolutePath,
             workspaceFolderAbsolutePath,
             node.value

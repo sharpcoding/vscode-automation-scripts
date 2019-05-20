@@ -1,1 +1,3 @@
-export { absoluteImportsByRootModule } from './absolute-imports-by-root-module';
+export {
+  rootModuleAbsoluteImportPaths
+} from './root-module-absolute-import-paths';

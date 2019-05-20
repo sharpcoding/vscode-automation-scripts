@@ -1,4 +1,4 @@
-import { absoluteImportsByRootModule } from './tools';
+import { rootModuleAbsoluteImportPaths } from './tools';
 
 const commandLineArgs = require('command-line-args');
 const commandLineOptionDefinitions = [
@@ -20,5 +20,5 @@ if (
   options['absolute-imports-by-root-module'] &&
   options['workspace-folder']
 ) {
-  absoluteImportsByRootModule(options.path, options['workspace-folder']);
+  rootModuleAbsoluteImportPaths(options.path, options['workspace-folder']);
 }

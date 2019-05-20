@@ -12,14 +12,12 @@ const getRelativePathDepthChange = (relativePath: string): number =>
     (arr: string[]) => arr.length
   )(relativePath);
 
-export const importRefersToRootModule = (
+export const moduleImportRelavitePathToRootModuleDepthDifference = (
   srcFileAbsolutePath: string,
   workspaceFolderAbsolutePath: string,
   moduleImportRelativePath: string
 ) =>
   getDepthOfAbsolutePath(path.dirname(srcFileAbsolutePath)) -
-    getDepthOfAbsolutePath(workspaceFolderAbsolutePath) -
-    getRelativePathDepthChange(moduleImportRelativePath) <=
+  getDepthOfAbsolutePath(workspaceFolderAbsolutePath) -
+  getRelativePathDepthChange(moduleImportRelativePath) -
   1;
-
-// console.log(getDepthOfAbsolutePath());
