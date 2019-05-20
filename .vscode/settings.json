@@ -1,5 +1,5 @@
 {
   "command-runner.commands": {
-    "absolutify-path": "./node_modules/.bin/ts-node ./src/index.ts --absolutify-imports ${file}"
+    "absolute-imports-by-root-module": "./node_modules/.bin/ts-node ./src/index.ts --absolute-imports-by-root-module ${file}"
   }
 }

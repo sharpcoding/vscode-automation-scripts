@@ -1,1 +1,1 @@
-export { absolutifyImports } from './absolutify-imports';
+export { absoluteImportsByRootModule } from './absolute-imports-by-root-module';
